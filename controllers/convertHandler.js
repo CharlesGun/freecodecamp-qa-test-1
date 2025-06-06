@@ -48,17 +48,19 @@ function ConvertHandler() {
   };
 
   this.getUnit = function (input) {
-    // lets assume we got input like this input = 3,1lbs
-    // we need to extract the unit part
+    // lets assume we got input like this input = 3,1lbs or LBS
+    // so we need the regex that matches to upper and lower case letters
     const unitRegex = /[a-zA-Z]+/;
     const match = input.match(unitRegex);
+    if (match[0] !== 'L') {
+      match[0] = match[0].toLowerCase();
+    }
     if (!match || !units[match[0]]) {
       return 'invalid unit';
     }
 
-    if (match[0] !== 'L') {
-      match[0] = match[0].toLowerCase();
-    }
+    console.log(`Unit found: ${match[0]}`);
+    
 
     return match[0];
   };
