@@ -58,10 +58,7 @@ function ConvertHandler() {
     if (!match || !units[match[0]]) {
       return 'invalid unit';
     }
-
-    console.log(`Unit found: ${match[0]}`);
     
-
     return match[0];
   };
 
@@ -107,7 +104,7 @@ function ConvertHandler() {
         return 'invalid unit';
     }
 
-    return result.toFixed(5);
+    return Number(result.toFixed(5));
   };
 
   this.getString = function (initNum, initUnit, returnNum, returnUnit) {
