@@ -41,10 +41,10 @@ function ConvertHandler() {
       if (denominator === 0) {
         return 'invalid number';
       }
-      return numerator / denominator;
+      return Number(numerator / denominator);
     }
 
-    return match[0];
+    return Number(match[0]);
   };
 
   this.getUnit = function (input) {
