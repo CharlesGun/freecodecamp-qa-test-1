@@ -32,7 +32,7 @@ suite('Functional Tests', function () {
             })
             .end((err, res) => {
                 assert.equal(res.status, 200);
-                assert.equal(res.body, 'invalid unit');
+                assert.equal(res.text, 'invalid unit');
                 done();
             })
     })
@@ -45,7 +45,7 @@ suite('Functional Tests', function () {
             })
             .end((err, res) => {
                 assert.equal(res.status, 200);
-                assert.equal(res.body, 'invalid number');
+                assert.equal(res.text, 'invalid number');
                 done();
             })
     })
@@ -58,7 +58,7 @@ suite('Functional Tests', function () {
             })
             .end((err, res) => {
                 assert.equal(res.status, 200);
-                assert.equal(res.body, 'invalid number and unit');
+                assert.equal(res.text, 'invalid number and unit');
                 done();
             })
     })

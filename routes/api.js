@@ -9,12 +9,19 @@ module.exports = function (app) {
 
   app.route('/api/convert').get((req, res) => {
     const input = req.query.input;
+    expect(input).to.exist;
+    expect(input).to.be.a('string');
+    
+    if(!input){
+      return res.type('txt').send('invalid unit');
+    }
+
     if (convertHandler.getNum(input) === 'invalid number' && convertHandler.getUnit(input) === 'invalid unit') {
-      return res.status(200).json('invalid number and unit');
+      return res.type('txt').send('invalid number and unit');
     } else if (convertHandler.getNum(input) === 'invalid number') {
-      return res.status(200).json('invalid number');
+      return res.type('txt').send('invalid number');
     } else if (convertHandler.getUnit(input) === 'invalid unit') {
-      return res.status(200).json('invalid unit');
+      return res.type('txt').send('invalid unit');
     }
 
     let initNum = convertHandler.getNum(input);

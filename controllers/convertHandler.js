@@ -19,32 +19,62 @@ const convertions = {
 function ConvertHandler() {
 
   this.getNum = function (input) {
-    // lets assume we got input like this input = 3,1lbs or 3,1/2lbs
-    // we need to extract the number part and can have more than 1 fraction
-    // e.g. 3,1/2lbs or 3,1/2/3lbs
-    const numRegex = /[0-9]+([.,][0-9]+)?(\/[0-9]+([.,][0-9]+)?)*/;
 
-    const match = input.match(numRegex);
-    if (!input) {
-      return 1;
+    if (!input || typeof input !== 'string') return 1;
+
+    const sanitized = input.trim();
+
+    // Extract the numeric part (up to the first letter)
+    const numberMatch = sanitized.match(/^[^a-zA-Z]*/);
+    const numberPart = numberMatch ? numberMatch[0] : '';
+
+    // If there's no numeric part but unit exists, return 1
+    if (!numberPart || /^[\s]*$/.test(numberPart)) {
+      return /^[a-zA-Z]+$/.test(sanitized) ? 1 : 'invalid number';
     }
-    if (!match) {
-      return 1;
+
+    // Validate allowed characters
+    if (/[^0-9.,\/]/.test(numberPart)) {
+      return 'invalid number';
     }
-    if(match[0].includes('/')) {
-      const parts = match[0].split('/');
-      if (parts.length > 2) {
+
+    // Disallow multiple fractions
+    if ((numberPart.match(/\//g) || []).length > 1) {
+      return 'invalid number';
+    }
+
+    // Handle fraction
+    if (numberPart.includes('/')) {
+      const [numeratorStr, denominatorStr] = numberPart.split('/');
+
+      if (!numeratorStr || !denominatorStr) return 'invalid number';
+
+      if (
+        (numeratorStr.match(/[.,]/g) || []).length > 1 ||
+        (denominatorStr.match(/[.,]/g) || []).length > 1
+      ) {
         return 'invalid number';
       }
-      const numerator = parseFloat(parts[0].replace(',', '.'));
-      const denominator = parseFloat(parts[1].replace(',', '.'));
-      if (denominator === 0) {
+
+      const numerator = parseFloat(numeratorStr.replace(',', '.'));
+      const denominator = parseFloat(denominatorStr.replace(',', '.'));
+
+      if (isNaN(numerator) || isNaN(denominator) || denominator === 0) {
         return 'invalid number';
       }
+
       return Number(numerator / denominator);
     }
 
-    return Number(match[0]);
+    // Single number (not a fraction)
+    if ((numberPart.match(/[.,]/g) || []).length > 1) {
+      return 'invalid number';
+    }
+
+    const value = parseFloat(numberPart.replace(',', '.'));
+    return isNaN(value) ? 'invalid number' : value;
+
+
   };
 
   this.getUnit = function (input) {
@@ -55,10 +85,13 @@ function ConvertHandler() {
     if (match[0] !== 'L') {
       match[0] = match[0].toLowerCase();
     }
+    if (match[0] === 'l') {
+      match[0] = 'L';
+    }
     if (!match || !units[match[0]]) {
       return 'invalid unit';
     }
-    
+
     return match[0];
   };
 
